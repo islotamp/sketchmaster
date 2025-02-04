@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JustSketch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Link para Font Awesome -->
+    <style>
+        body {
+            background-color: black; /* Black background */
+            color: white; /* White text for contrast */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #controls {
+            margin: 20px 0;
+            display: flex; /* Align controls in line */
+            justify-content: center; /* Center controls */
+            align-items: center; /* Align vertically */
+        }
+        #timer {
+            font-size: 14px; /* Reduced font size for timer */
+            margin-right: 10px; /* Space between timer and buttons */
+        }
+        #duration {
+            font-size: 14px; /* Reduced font size for duration selector */
+            margin-right: 10px; /* Space between duration selector and buttons */
+            background-color: black; /* Black background */
+            color: white; /* White text */
+            border: 1px solid white; /* White border */
+            border-radius: 5px; /* Rounded borders */
+            padding: 5px;
+        }
+        #slide-container {
+            width: 100vw; /* Full viewport width */
+            height: 80vh; /* 80% viewport height */
+            margin: 20px auto;
+            display: flex; /* Center image in container */
+            align-items: center; /* Align vertically */
+            justify-content: center; /* Align horizontally */
+            overflow: hidden; /* Hide overflow content */
+        }
+        #slide-image {
+            max-width: 100%; /* Maximum width limited to container size */
+            max-height: 100%; /* Maximum height limited to container size */
+            object-fit: contain; /* Ensure image fits without cutting or distorting */
+        }
+        .zoomed {
+            position: fixed; /* Fix image on screen */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%) scale(1.5); /* Center and apply zoom */
+            z-index: 1000; /* Place image above other elements */
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
+            display: none; /* Initially hidden */
+            z-index: 999; /* Place overlay above other elements */
+        }
+        #back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: white;
+            color: black;
+            border-radius: 5px;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #back-btn:hover {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>JustSketch</h1>
+
+    <!-- Initial Selection Section -->
+    <div id="category-selection">
+        <h2>Select a Category:</h2>
+        
+        <label for="gender">Gender:</label>
+        <select id="gender">
+          <option value="all">All</option>
+          <option value="men">Men</option>
+          <option value="women">Women</option>
+          <option value="trans">Trans</option>
+          <option value="couple-group">Couple/Group</option>
+          <option value="close-ups">Close-Ups</option> <!-- Nova categoria -->
+        </select>
+
+        <!-- Additional options for Couple/Group -->
+        <div id="couple-options" style="display:none;">
+          <label for="type">Couple Type:</label>
+          <select id="type">
+              <option value="all">All</option>
+              <option value="hetero">Hetero</option>
+              <option value="lgbt">LGBT</option>
+          </select>
+        </div>
+
+        <!-- Close-Up Options -->
+        <div id="closeup-options" style="display:none;">
+          <label for="closeup-type">Close-Up Type:</label>
+          <select id="closeup-type">
+              <option value="all">All</option>
+              <option value="pussy">Pussy</option>
+              <option value="penis">Penis</option>
+              <option value="tits">Tits</option>
+              <option value="face">Face</option>
+          </select>
+        </div>
+
+        <button id="start-btn">Start</button> <!-- Button to start -->
+    </div>
+
+    <!-- Controls and Images -->
+    <div id="controls" style="display:none;">
+        <button id="back-btn">Back to Home</button> <!-- Back button -->
+        
+        <div id="timer">Time Left: 60s</div> <!-- Timer -->
+        
+        <select id="duration">
+            <option value="10">10s</option>
+            <option value="30">30s</option>
+            <option value="60" selected>1m</option>
+            <option value="120">2m</option>
+            <option value="300">5m</option>
+            <option value="600">10m</option>
+        </select>
+
+        <button id="prev-btn" title="Previous"><i class="fas fa-chevron-left"></i></button> <!-- Left arrow icon -->
+        
+        <button id="pause-btn" title="Pause"><i class="fas fa-pause"></i></button> <!-- Pause icon -->
+        
+        <button id="next-btn" title="Next"><i class="fas fa-chevron-right"></i></button> <!-- Right arrow icon -->
+    </div>
+
+    <div id="slide-container" style="display:none;">
+        <img id="slide-image" src="" alt="" />
+    </div>
+
+    <!-- Overlay for Zoom -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- JavaScript -->
+    <script>
+      const originalImages = [
+          { src:'https://i.imgur.com/tZbMzvX.jpg', category:'women' },
+          { src:'https://i.imgur.com/zz8yKgL.jpg', category:'women' },
+          { src:'https://i.imgur.com/KrIvTVh.jpg', category:'women' },
+          { src:'https://i.imgur.com/elIk734.jpg', category:'women' },
+          { src:'https://i.imgur.com/xzebKeZ.jpg', category:'women' },
+          { src:'https://i.imgur.com/ttmgyp5.jpg', category:'women' },
+          { src:'https://i.imgur.com/xnNuvvO.jpg', category:'women' },
+          { src:'https://i.imgur.com/ONKilBC.jpg', category:'women' },
+          { src:'https://i.imgur.com/Ysnczqb.jpg', category:'women' },
+          { src:'https://i.imgur.com/MRqOqTk.jpg', category:'women' },
+          { src:'https://i.imgur.com/tHzWmgJ.jpg', category:'women' },
+          { src:'https://i.imgur.com/0ue9xya.jpg', category:'women' },
+          { src:'https://i.imgur.com/BRNHqNT.jpg', category:'women' },
+          { src:'https://i.imgur.com/N5BEUzh.jpg', category:'women' },
+          { src:'https://i.imgur.com/NI0y7az.jpg', category:'women' },
+          { src:'https://i.imgur.com/3OslWpo.jpg', category:'women' },
+          { src:'https://i.imgur.com/KEPmuHx.jpg', category:'women' },
+          { src:'https://i.imgur.com/qjB5Iv5.jpg', category:'women' },
+          { src:'https://i.imgur.com/Df7rnXR.jpg', category:'women' },
+          { src:'https://i.imgur.com/BRntOF8.jpg', category:'women' },
+          { src:'https://i.imgur.com/hDVtOr9.jpg', category:'women' },
+          { src:'https://i.imgur.com/kJmdsUx.jpg', category:'women' },
+          { src:'https://i.imgur.com/crosFGF.jpg', category:'women' },
+          { src:'https://i.imgur.com/cJgVtUS.jpg', category:'women' },
+          { src:'https://i.imgur.com/2Gc08Sg.jpg', category:'women' },
+          { src:'https://i.imgur.com/gijhgYk.jpg', category:'women' },
+          { src:'https://i.imgur.com/Ogauv7A.jpg', category:'women' },
+          { src:'https://i.imgur.com/5rn1J1x.jpg', category:'women' },
+          { src:'https://i.imgur.com/njnW1Pp.jpg', category:'women' },
+          { src:'https://i.imgur.com/7p8BZdk.jpg', category:'women' },
+          { src:'https://i.imgur.com/3kfHKM9.jpg', category:'women' },
+          { src:'https://i.imgur.com/EaPc0GO.jpg', category:'women' },
+          { src:'https://i.imgur.com/83WYJR7.jpg', category:'women' },
+          { src:'https://i.imgur.com/HS5NySZ.jpg', category:'women' },
+          { src:'https://i.imgur.com/QEn9Gs3.jpg', category:'women' },
+          { src:'https://i.imgur.com/MeE75Yw.jpg', category:'women' },
+          { src:'https://i.imgur.com/ibnGJMX.jpg', category:'women' },
+          { src:'https://i.imgur.com/FxyfKAR.jpg', category:'women' },
+          { src:'https://i.imgur.com/eguvyBj.jpg', category:'women' },
+          { src:'https://i.imgur.com/h8Tb6mP.jpg', category:'women' },
+          { src:'https://i.imgur.com/haWjo4Q.jpg', category:'women' },
+          { src:'https://i.imgur.com/6JCxtGV.jpg', category:'women' },
+          { src:'https://i.imgur.com/UaYq4QF.jpg', category:'women' },
+          { src:'https://i.imgur.com/UIZasQS.jpg', category:'women' },
+          { src:'https://i.imgur.com/iB5nPy1.jpg', category:'women' },
+          { src:'https://i.imgur.com/nb5Rejb.jpg', category:'women' },
+          { src:'https://i.imgur.com/lNB2plQ.jpg', category:'women' },
+          { src:'https://i.imgur.com/7SzexD7.jpg', category:'women' },
+          { src:'https://i.imgur.com/OOzASFK.jpg', category:'women' },
+          { src:'https://i.imgur.com/Suby8uI.jpg', category:'women' },
+          { src:'aaaaaaaaaaa', category:'women' },
+
+
+	  { src:'https://i.imgur.com/jNx07Zm.jpg', category:'men' },
+	  { src:'https://i.imgur.com/LFXLXHR.jpg', category:'men' },
+	  { src:'https://i.imgur.com/K5Z412a.jpg', category:'men' },
+	  { src:'https://i.imgur.com/Drgv62w.jpg', category:'men' },
+	  { src:'https://i.imgur.com/RDOjsO7.jpg', category:'men' },
+	  { src:'https://i.imgur.com/Ev7QN20.jpg', category:'men' },
+	  { src:'https://i.imgur.com/ukkVpLu.jpg', category:'men' },
+	  { src:'https://i.imgur.com/Bzoi6qj.jpg', category:'men' },
+	  { src:'https://i.imgur.com/hqGwKt8.jpg', category:'men' },
+	  { src:'https://i.imgur.com/9oXsB2T.jpg', category:'men' },
+	  { src:'https://i.imgur.com/FFqsfgg.jpg', category:'men' },
+	  { src:'https://i.imgur.com/EbGGNAF.jpg', category:'men' },
+	  { src:'https://i.imgur.com/I8THk8u.jpg', category:'men' },
+	  { src:'https://i.imgur.com/vNab6xQ.jpg', category:'men' },
+	  { src:'https://i.imgur.com/ho1BpTb.jpg', category:'men' },
+	  { src:'https://i.imgur.com/7U9jX3d.jpg', category:'men' },
+	  { src:'https://imgur.com/bFT5h1E', category:'men' },
+	  { src:'AAAAAAAA', category:'men' },
+
+          { src:'https://i.imgur.com/dlQuHrd.jpg', category:'couple-group' },
+          { src:'https://i.imgur.com/KwFNBG1.jpg', category:'couple-group' },
+          { src:'https://i.imgur.com/JCUtdpU.jpg', category:'couple-group' },
+          { src:'https://i.imgur.com/q3fXPbO.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/9kanzEB.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/LKfCe6Z.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/1wuAgb8.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/gGmYYJU.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/NzwaSBs.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/ty5GTA0.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/tE0nzUm.jpg', category:'couple-group'},
+          { src:'https://i.imgur.com/PswtIav.jpg', category:'couple-group'},
+          { src:'AAAAA', category:'couple-group'},
+
+	  { src:'https://i.imgur.com/jUNAK9x.jpg', category:'trans' },
+          
+          // Imagens para Close-Ups
+          { src:"https://via.placeholder.com/1200x800?text=Pussy", category:"close-ups", type:"pussy" }, 
+          { src:"https://via.placeholder.com/1200x800?text=Penis", category:"close-ups", type:"penis" }, 
+          { src:"https://via.placeholder.com/1200x800?text=Tits", category:"close-ups", type:"tits" }, 
+          { src:"https://via.placeholder.com/1200x800?text=Face", category:"close-ups", type:"face" }
+      ];
+
+      let images = [...originalImages]; // Cópia inicial das imagens
+      let currentIndex = 0;
+      let timer = null;
+      let isPaused = false;
+      let seconds = parseInt(document.getElementById('duration').value);
+
+      const slideImage = document.getElementById('slide-image');
+      const overlay = document.getElementById('overlay');
+
+      // Função para embaralhar o array
+      function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+          }
+      }
+
+      // Evento de clique no botão "Start"
+      document.getElementById('start-btn').addEventListener('click', () => {
+           const genderSelection = document.getElementById('gender').value;
+           const typeSelection = document.getElementById('type').value;
+           const closeupTypeSelection = document.getElementById('closeup-type').value;
+
+           // Filtrar as imagens com base na seleção
+           const filteredImages = originalImages.filter(image => {
+               const genderMatch = genderSelection === 'all' || image.category === genderSelection;
+
+               if (genderSelection === 'couple-group') {
+                   return genderMatch && (typeSelection === 'all' || image.type === typeSelection);
+               } else if (genderSelection === 'close-ups') {
+                   return genderMatch && (closeupTypeSelection === 'all' || image.type === closeupTypeSelection);
+               }
+
+               return genderMatch;
+           });
+
+           if (filteredImages.length > 0) {
+               shuffleArray(filteredImages); // Embaralha as imagens filtradas
+               images = [...filteredImages]; // Atualiza a lista global com as imagens filtradas
+               currentIndex = 0;
+
+               document.getElementById('category-selection').style.display = 'none';
+               document.getElementById('controls').style.display = 'flex';
+               document.getElementById('slide-container').style.display = 'flex';
+               updateSlide();
+           } else {
+               alert('No images found for this selection!');
+           }
+       });
+
+      // Atualizar o slide atual
+      function updateSlide() {
+           slideImage.src = images[currentIndex].src;
+           seconds = parseInt(document.getElementById('duration').value);
+           updateTimerDisplay();
+           startTimer();
+       }
+
+      // Timer Functions
+      function startTimer() {
+           clearInterval(timer);
+           timer = setInterval(() => {
+               if (!isPaused && seconds > 0) {
+                   seconds--;
+                   updateTimerDisplay();
+                   if (seconds <= 0) nextSlide();
+               }
+           }, 1000);
+       }
+
+      function updateTimerDisplay() {
+           document.getElementById('timer').innerText = `Time Left: ${seconds}s`;
+       }
+
+      // Navegação entre slides
+      document.getElementById('next-btn').addEventListener('click', nextSlide);
+      document.getElementById('prev-btn').addEventListener('click', prevSlide);
+
+      function nextSlide() {
+           currentIndex = (currentIndex + 1) % images.length;
+           updateSlide();
+       }
+
+      function prevSlide() {
+           currentIndex = (currentIndex - 1 + images.length) % images.length;
+           updateSlide();
+       }
+
+      // Botão "Pause"
+      document.getElementById('pause-btn').addEventListener('click', () => {
+           isPaused = !isPaused;
+
+           const pauseIcon = document.getElementById("pause-btn").querySelector("i");
+           
+           if (isPaused) {
+               pauseIcon.classList.remove("fa-pause");
+               pauseIcon.classList.add("fa-play");
+               clearInterval(timer);
+           } else {
+               pauseIcon.classList.remove("fa-play");
+               pauseIcon.classList.add("fa-pause");
+               startTimer();
+           }
+       });
+
+       // Botão "Back to Home"
+       document.getElementById('back-btn').addEventListener('click', () => {
+           clearInterval(timer);
+
+           // Redefinir estados e elementos visuais
+           images = [...originalImages];
+           currentIndex = 0;
+
+           document.getElementById('controls').style.display = 'none';
+           document.getElementById('slide-container').style.display = 'none';
+           document.getElementById('category-selection').style.display = 'block';
+
+           // Resetar seleção de filtros
+           document.getElementById('gender').value = 'all';
+       });
+
+       // Zoom na imagem
+       slideImage.addEventListener('click', () => {
+           if (slideImage.classList.contains('zoomed')) {
+               slideImage.classList.remove('zoomed');
+               overlay.style.display = 'none';
+           } else {
+               slideImage.classList.add('zoomed');
+               overlay.style.display = 'block';
+           }
+       });
+
+       overlay.addEventListener('click', () => {
+           slideImage.classList.remove('zoomed');
+           overlay.style.display = 'none';
+       });
+
+       // Alteração da duração do timer
+       document.getElementById('duration').addEventListener('change', () => {
+           seconds = parseInt(document.getElementById('duration').value);
+           updateTimerDisplay();
+       });
+       
+       // Mostrar ou esconder opções de close-up dependendo da seleção de gênero
+       document.getElementById("gender").addEventListener("change", function() {
+         if (this.value === "close-ups") {
+             document.getElementById("closeup-options").style.display = "block";
+             document.getElementById("couple-options").style.display = "none";
+         } else if (this.value === "couple-group") {
+             document.getElementById("couple-options").style.display = "block";
+             document.getElementById("closeup-options").style.display = "none";
+         } else {
+             document.getElementById("closeup-options").style.display = "none";
+             document.getElementById("couple-options").style.display = "none";
+         }
+       });
+    </script>
+</body>
+</html>
