@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JustSketch</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Link para Font Awesome -->
+    <title>SketchMaster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: black; /* Black background */
-            color: white; /* White text for contrast */
+            background-color: black;
+            color: white;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -16,43 +16,50 @@
         }
         #controls {
             margin: 20px 0;
-            display: flex; /* Align controls in line */
-            justify-content: center; /* Center controls */
-            align-items: center; /* Align vertically */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #timer {
-            font-size: 14px; /* Reduced font size for timer */
-            margin-right: 10px; /* Space between timer and buttons */
+            font-size: 14px;
+            margin-right: 10px;
         }
         #duration {
-            font-size: 14px; /* Reduced font size for duration selector */
-            margin-right: 10px; /* Space between duration selector and buttons */
-            background-color: black; /* Black background */
-            color: white; /* White text */
-            border: 1px solid white; /* White border */
-            border-radius: 5px; /* Rounded borders */
+            font-size: 14px;
+            margin-right: 10px;
+            background-color: black;
+            color: white;
+            border: 1px solid white;
+            border-radius: 5px;
             padding: 5px;
         }
         #slide-container {
-            width: 100vw; /* Full viewport width */
-            height: 80vh; /* 80% viewport height */
+            position: relative;
+            width: 100vw;
+            height: 80vh;
             margin: 20px auto;
-            display: flex; /* Center image in container */
-            align-items: center; /* Align vertically */
-            justify-content: center; /* Align horizontally */
-            overflow: hidden; /* Hide overflow content */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
         #slide-image {
-            max-width: 100%; /* Maximum width limited to container size */
-            max-height: 100%; /* Maximum height limited to container size */
-            object-fit: contain; /* Ensure image fits without cutting or distorting */
+            transition: transform 0.2s ease;
+            cursor: grab;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transform: none;
+            position: static;
+            top: auto;
+            left: auto;
         }
         .zoomed {
-            position: fixed; /* Fix image on screen */
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%) scale(1.5); /* Center and apply zoom */
-            z-index: 1000; /* Place image above other elements */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.5);
+            z-index: 1000;
         }
         .overlay {
             position: fixed;
@@ -60,9 +67,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
-            display: none; /* Initially hidden */
-            z-index: 999; /* Place overlay above other elements */
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 999;
         }
         #back-btn {
             position: absolute;
@@ -81,11 +88,10 @@
     </style>
 </head>
 <body>
-    <h1>JustSketch</h1>
+    <h1>SketchMaster</h1>
 
-    <!-- Initial Selection Section -->
     <div id="category-selection">
-        <h2>Select a Category:</h2>
+        <h2>Category:</h2>
         
         <label for="gender">Gender:</label>
         <select id="gender">
@@ -93,13 +99,12 @@
           <option value="men">Men</option>
           <option value="women">Women</option>
           <option value="trans">Trans</option>
-          <option value="couple-group">Couple/Group</option>
-          <option value="close-ups">Close-Ups</option> <!-- Nova categoria -->
+          <option value="couple-group">Couple</option>
+          <option value="close-ups">Close-Ups</option>
         </select>
 
-        <!-- Additional options for Couple/Group -->
         <div id="couple-options" style="display:none;">
-          <label for="type">Couple Type:</label>
+          <label for="type">Type:</label>
           <select id="type">
               <option value="all">All</option>
               <option value="hetero">Hetero</option>
@@ -107,9 +112,8 @@
           </select>
         </div>
 
-        <!-- Close-Up Options -->
         <div id="closeup-options" style="display:none;">
-          <label for="closeup-type">Close-Up Type:</label>
+          <label for="closeup-type">Type:</label>
           <select id="closeup-type">
               <option value="all">All</option>
               <option value="pussy">Pussy</option>
@@ -119,14 +123,13 @@
           </select>
         </div>
 
-        <button id="start-btn">Start</button> <!-- Button to start -->
+        <button id="start-btn">Start</button>
     </div>
 
-    <!-- Controls and Images -->
     <div id="controls" style="display:none;">
-        <button id="back-btn">Back to Home</button> <!-- Back button -->
+        <button id="back-btn">Back</button>
         
-        <div id="timer">Time Left: 60s</div> <!-- Timer -->
+        <div id="timer">Time: 60s</div>
         
         <select id="duration">
             <option value="10">10s</option>
@@ -137,21 +140,19 @@
             <option value="600">10m</option>
         </select>
 
-        <button id="prev-btn" title="Previous"><i class="fas fa-chevron-left"></i></button> <!-- Left arrow icon -->
+        <button id="prev-btn" title="Previous"><i class="fas fa-chevron-left"></i></button>
         
-        <button id="pause-btn" title="Pause"><i class="fas fa-pause"></i></button> <!-- Pause icon -->
+        <button id="pause-btn" title="Pause"><i class="fas fa-pause"></i></button>
         
-        <button id="next-btn" title="Next"><i class="fas fa-chevron-right"></i></button> <!-- Right arrow icon -->
+        <button id="next-btn" title="Next"><i class="fas fa-chevron-right"></i></button>
     </div>
 
     <div id="slide-container" style="display:none;">
         <img id="slide-image" src="" alt="" />
     </div>
 
-    <!-- Overlay for Zoom -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- JavaScript -->
     <script>
       const originalImages = [
           { src:'https://i.imgur.com/tZbMzvX.jpg', category:'women' },
@@ -204,6 +205,307 @@
           { src:'https://i.imgur.com/7SzexD7.jpg', category:'women' },
           { src:'https://i.imgur.com/OOzASFK.jpg', category:'women' },
           { src:'https://i.imgur.com/Suby8uI.jpg', category:'women' },
+          { src:'https://iili.io/2tbPEmP.jpg', category:'women' },
+          { src:'https://iili.io/2tbPMI1.jpg', category:'women' },
+          { src:'https://iili.io/2tbPVhF.md.webp', category:'women' },
+          { src:'https://iili.io/2tbPWLg.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPhBa.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPwrv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPO2R.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPkkN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPvpI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPSIt.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPUhX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPP4f.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPs24.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPLYl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPQv2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPDT7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPmQe.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbPyCu.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiH4j.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbid3x.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbi2YQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbi3vV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiFyB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbifTP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiqj1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiBZF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbinCg.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbix6J.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiTaR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiuvp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiAyN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbi5uI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbi7jt.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbicnn.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbilGs.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbi06G.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiEFf.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiGa4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiM8l.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiW92.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiXuS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbijt9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiNne.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiOMu.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbie6b.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbivFj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiS8Q.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbig9V.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbirAB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbi4wP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiioF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbisMg.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiLPa.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiZKJ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbitcv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiDSR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbim9p.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbipAN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbiyNI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbs9tt.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsJoX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsFKG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsKlf.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsfS4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsBHl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsCR2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsnNS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsoD7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbszx9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsTiu.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsAKb.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsRlj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbs5Ux.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsYHQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsaRV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbscOB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbslDP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsGig.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsVfa.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsW0J.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsXUv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsjJR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbswRp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsNON.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbskxt.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbs8sn.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsg0G.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsrgf.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsP5l.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsie2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbssbS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsQz7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbsm0b.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbspgj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbL9dx.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLH5Q.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLKLF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLqqg.jpg', category:'women' },
+          { src:'https://iili.io/2tbLB1a.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLodv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLx7R.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLzep.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLImN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLRLX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbL7Bn.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLY1s.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLarG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbL074.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbL1kl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLEp2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLMIS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLVh7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLWQ9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLwrb.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLO2j.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLeYx.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLkkQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLvpV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLSTB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLgQ1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLs3J.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLLYv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLZpp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbLDTN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQH4s.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQd3G.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ2af.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ3v4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQFyl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQfu2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQqjS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQBZ7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQnn9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQoGe.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQx6u.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQI3b.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQTaj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQu8x.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQAyQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ5uV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ7wB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQYZP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQcn1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQlMF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ06g.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQGcJ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQM8v.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQXup.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQhwN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQjtI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQNnt.jpg', category:'women' },
+          { src:'https://iili.io/2tbQOMX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQePn.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQvFs.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ8cG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQrAl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ4N2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQ6tS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQio7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQsV9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQLPe.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQZKu.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQtcb.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQDSj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbQmHx.jpg', category:'women' },
+          { src:'https://iili.io/2tbQpAQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZ2iF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZdV1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZFKg.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZKla.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZfUJ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZBHv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZCRR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZnNp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZoDN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZ5UG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZW0u.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZXUb.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZjJj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZw5x.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZNOQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZObV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZkzB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZvWP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZ8s1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZUqF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZg0g.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZ6dJ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZP5v.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZieR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZsbp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZQzN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZZXI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZbqX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZm1n.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbZpgs.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbt9dG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtH7f.jpg', category:'women' },
+          { src:'https://iili.io/2tbtJe4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtdml.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbt3I2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtFXS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtKL7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtqB9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtx7j.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtzkx.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtImQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtuIV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtAhB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtRLP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbt7B1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtarg.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtl2a.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtEpR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtMIp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtVhN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtWQI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtjEX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtw4n.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtO2s.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbteYG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtkvf.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtvp4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtSTl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtUj2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbt6G9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtP4e.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbts3u.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtLYb.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtZyx.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtbjV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtmZB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbtyCP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDH6F.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDd3g.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD2aa.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD38J.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDFyv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDqjp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDBZN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDnnI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDoGt.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDIFn.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDTas.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDu8G.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDR9f.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD7wl.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDYt2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDcnS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDlM7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD0P9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDEFe.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDEFe.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDGcu.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDM8b.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDW9j.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDXAx.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDhwQ.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDjtV.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDNoB.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDOMP.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDeP1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDvKF.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD8cg.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD4NR.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbD6tp.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDioN.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDsVI.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDLPt.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDZKX.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDtln.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDDSs.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDmHG.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDpRf.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbDyN4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbJx2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbdVS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbb2i7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbFf9.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbKle.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbfUu.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbBHb.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbCRj.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbnOx.jpg', category:'women' },
+          { src:'https://iili.io/2tbbAf1.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbR0F.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbb5Ug.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbba5J.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbcOv.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbblbR.jpg', category:'women' },
+          { src:'https://iili.io/2tbbEWN.jpg', category:'women' },
+          { src:'https://iili.io/2tbbVft.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbW0X.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbXgn.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbjJs.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbw5G.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbOb4.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbvX2.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbb8sS.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbUq7.md.jpg', category:'women' },
+          { src:'https://iili.io/2tbbg19.md.jpg', category:'women' },
           { src:'aaaaaaaaaaa', category:'women' },
 
 
@@ -224,7 +526,11 @@
 	  { src:'https://i.imgur.com/ho1BpTb.jpg', category:'men' },
 	  { src:'https://i.imgur.com/7U9jX3d.jpg', category:'men' },
 	  { src:'https://imgur.com/bFT5h1E', category:'men' },
-	  { src:'AAAAAAAA', category:'men' },
+	  { src:'https://iili.io/2tbtQvj.jpg', category:'men' },
+	  { src:'https://iili.io/2tbtDTQ.md.jpg', category:'men' },
+	  { src:'aaaaaaaaa', category:'men' },
+
+
 
           { src:'https://i.imgur.com/dlQuHrd.jpg', category:'couple-group' },
           { src:'https://i.imgur.com/KwFNBG1.jpg', category:'couple-group' },
@@ -238,6 +544,8 @@
           { src:'https://i.imgur.com/ty5GTA0.jpg', category:'couple-group'},
           { src:'https://i.imgur.com/tE0nzUm.jpg', category:'couple-group'},
           { src:'https://i.imgur.com/PswtIav.jpg', category:'couple-group'},
+          { src:'https://iili.io/2tbtB1e.md.jpg', category:'couple-group'},
+          { src:'AAAAA', category:'couple-group'},
           { src:'AAAAA', category:'couple-group'},
 
 	  { src:'https://i.imgur.com/jUNAK9x.jpg', category:'trans' },
@@ -246,165 +554,254 @@
           { src:"https://via.placeholder.com/1200x800?text=Pussy", category:"close-ups", type:"pussy" }, 
           { src:"https://via.placeholder.com/1200x800?text=Penis", category:"close-ups", type:"penis" }, 
           { src:"https://via.placeholder.com/1200x800?text=Tits", category:"close-ups", type:"tits" }, 
-          { src:"https://via.placeholder.com/1200x800?text=Face", category:"close-ups", type:"face" }
+          { src:"https://iili.io/2tbZrga.md.jpg", category:"close-ups", type:"face" }
       ];
 
-      let images = [...originalImages]; // Cópia inicial das imagens
-      let currentIndex = 0;
-      let timer = null;
-      let isPaused = false;
-      let seconds = parseInt(document.getElementById('duration').value);
+        let currentImages = [...originalImages];
+        let currentImageIndex = 0;
+        let timer;
+        let isPaused = false;
+        let isZoomed = false;
+        let zoomLevel = 1.5;
+        const zoomIncrement = 0.1;
+        let startX, startY;
+        let timeLeft; // Variável para armazenar o tempo restante
 
-      const slideImage = document.getElementById('slide-image');
-      const overlay = document.getElementById('overlay');
+        const slideImage = document.getElementById('slide-image');
+        const controls = document.getElementById('controls');
+        const timerDisplay = document.getElementById('timer');
+        const durationSelect = document.getElementById('duration');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const overlay = document.getElementById('overlay');
+        const categorySelection = document.getElementById('category-selection');
+        const slideContainer = document.getElementById('slide-container');
+        const backBtn = document.getElementById('back-btn');
+        const genderSelect = document.getElementById('gender');
+        const coupleOptions = document.getElementById('couple-options');
+        const typeSelect = document.getElementById('type');
+        const closeupOptions = document.getElementById('closeup-options');
+        const closeupTypeSelect = document.getElementById('closeup-type');
+        const startBtn = document.getElementById('start-btn');
 
-      // Função para embaralhar o array
-      function shuffleArray(array) {
-          for (let i = array.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [array[i], array[j]] = [array[j], array[i]];
-          }
-      }
+        // Function to update displayed time
+        function updateTimerDisplay(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            timerDisplay.textContent = `Time: ${minutes}m ${seconds}s`;
+        }
 
-      // Evento de clique no botão "Start"
-      document.getElementById('start-btn').addEventListener('click', () => {
-           const genderSelection = document.getElementById('gender').value;
-           const typeSelection = document.getElementById('type').value;
-           const closeupTypeSelection = document.getElementById('closeup-type').value;
+        // Function to start the timer
+        function startTimer(duration) {
+            timeLeft = duration; // Define o tempo restante
+            updateTimerDisplay(timeLeft);
 
-           // Filtrar as imagens com base na seleção
-           const filteredImages = originalImages.filter(image => {
-               const genderMatch = genderSelection === 'all' || image.category === genderSelection;
+            // Clear any existing timer
+            clearInterval(timer);
 
-               if (genderSelection === 'couple-group') {
-                   return genderMatch && (typeSelection === 'all' || image.type === typeSelection);
-               } else if (genderSelection === 'close-ups') {
-                   return genderMatch && (closeupTypeSelection === 'all' || image.type === closeupTypeSelection);
-               }
+            timer = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    updateTimerDisplay(timeLeft);
 
-               return genderMatch;
-           });
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        nextImage();
+                        startTimer(parseInt(durationSelect.value)); // Reinicia com a duração atual
+                    }
+                }
+            }, 1000);
+        }
 
-           if (filteredImages.length > 0) {
-               shuffleArray(filteredImages); // Embaralha as imagens filtradas
-               images = [...filteredImages]; // Atualiza a lista global com as imagens filtradas
-               currentIndex = 0;
+        // Function to load and display the image
+        function loadImage(imageSrc) {
+            slideImage.src = imageSrc;
+            slideImage.style.transform = 'none'; // Reset transformations
+            slideImage.style.position = 'static'; // Reset position
+            slideImage.style.top = 'auto';
+            slideImage.style.left = 'auto';
 
-               document.getElementById('category-selection').style.display = 'none';
-               document.getElementById('controls').style.display = 'flex';
-               document.getElementById('slide-container').style.display = 'flex';
-               updateSlide();
-           } else {
-               alert('No images found for this selection!');
-           }
-       });
+            clearInterval(timer); // Limpa o timer anterior
+            startTimer(parseInt(durationSelect.value)); // Reinicia o timer
+        }
 
-      // Atualizar o slide atual
-      function updateSlide() {
-           slideImage.src = images[currentIndex].src;
-           seconds = parseInt(document.getElementById('duration').value);
-           updateTimerDisplay();
-           startTimer();
-       }
+        // Function to display the next image (corrected for shuffling)
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+            loadImage(currentImages[currentImageIndex].src);
+        }
 
-      // Timer Functions
-      function startTimer() {
-           clearInterval(timer);
-           timer = setInterval(() => {
-               if (!isPaused && seconds > 0) {
-                   seconds--;
-                   updateTimerDisplay();
-                   if (seconds <= 0) nextSlide();
-               }
-           }, 1000);
-       }
+        // Function to display the previous image (corrected for shuffling)
+        function prevImage() {
+            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+            loadImage(currentImages[currentImageIndex].src);
+        }
 
-      function updateTimerDisplay() {
-           document.getElementById('timer').innerText = `Time Left: ${seconds}s`;
-       }
+        // Function to toggle pause/resume
+        function togglePause() {
+            isPaused = !isPaused;
+            if (isPaused) {
+                clearInterval(timer);
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                startTimer(timeLeft); // Continua de onde parou
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+        }
 
-      // Navegação entre slides
-      document.getElementById('next-btn').addEventListener('click', nextSlide);
-      document.getElementById('prev-btn').addEventListener('click', prevSlide);
+        // Function to handle image zoom
+        function zoomImage() {
+            slideImage.classList.add('zoomed');
+            overlay.style.display = 'block';
+            isZoomed = true;
 
-      function nextSlide() {
-           currentIndex = (currentIndex + 1) % images.length;
-           updateSlide();
-       }
+            // Centralize the image
+            slideImage.style.position = 'fixed';
+            slideImage.style.left = '50%';
+            slideImage.style.top = '50%';
+            slideImage.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        }
 
-      function prevSlide() {
-           currentIndex = (currentIndex - 1 + images.length) % images.length;
-           updateSlide();
-       }
+        // Function to reset zoom
+        function resetZoom() {
+            slideImage.classList.remove('zoomed');
+            overlay.style.display = 'none';
+            isZoomed = false;
+            zoomLevel = 1.5;
 
-      // Botão "Pause"
-      document.getElementById('pause-btn').addEventListener('click', () => {
-           isPaused = !isPaused;
+            // Reset styles
+            slideImage.style.transform = 'none';
+            slideImage.style.position = 'static';
+            slideImage.style.top = 'auto';
+            slideImage.style.left = 'auto';
+        }
 
-           const pauseIcon = document.getElementById("pause-btn").querySelector("i");
-           
-           if (isPaused) {
-               pauseIcon.classList.remove("fa-pause");
-               pauseIcon.classList.add("fa-play");
-               clearInterval(timer);
-           } else {
-               pauseIcon.classList.remove("fa-play");
-               pauseIcon.classList.add("fa-pause");
-               startTimer();
-           }
-       });
+        // Function to handle zoom in/out with mouse wheel (only when zoomed)
+        function handleZoom(event) {
+            if (isZoomed) {
+                event.preventDefault();
+                const delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+                zoomLevel += delta * zoomIncrement;
+                zoomLevel = Math.max(0.5, Math.min(zoomLevel, 3));
+                slideImage.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
+            }
+        }
 
-       // Botão "Back to Home"
-       document.getElementById('back-btn').addEventListener('click', () => {
-           clearInterval(timer);
+        // Drag functionality
+        let isDragging = false;
 
-           // Redefinir estados e elementos visuais
-           images = [...originalImages];
-           currentIndex = 0;
+        function startDrag(e) {
+            if (isZoomed) {
+                isDragging = true;
+                startX = e.clientX - slideImage.offsetLeft;
+                startY = e.clientY - slideImage.offsetTop;
+                slideImage.style.cursor = 'grabbing';
+            }
+        }
 
-           document.getElementById('controls').style.display = 'none';
-           document.getElementById('slide-container').style.display = 'none';
-           document.getElementById('category-selection').style.display = 'block';
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.clientX - slideImage.offsetLeft;
+            const y = e.clientY - slideImage.offsetTop;
+            const walkX = (x - startX);
+            const walkY = (y - startY);
+            slideImage.style.left = (slideImage.offsetLeft + walkX) + 'px';
+            slideImage.style.top = (slideImage.offsetTop + walkY) + 'px';
+        }
 
-           // Resetar seleção de filtros
-           document.getElementById('gender').value = 'all';
-       });
+        function stopDrag() {
+            isDragging = false;
+            slideImage.style.cursor = 'grab';
+        }
 
-       // Zoom na imagem
-       slideImage.addEventListener('click', () => {
-           if (slideImage.classList.contains('zoomed')) {
-               slideImage.classList.remove('zoomed');
-               overlay.style.display = 'none';
-           } else {
-               slideImage.classList.add('zoomed');
-               overlay.style.display = 'block';
-           }
-       });
+        // Event listeners
+        slideImage.addEventListener('click', zoomImage);
+        overlay.addEventListener('click', resetZoom);
 
-       overlay.addEventListener('click', () => {
-           slideImage.classList.remove('zoomed');
-           overlay.style.display = 'none';
-       });
+        // Mouse wheel event listener
+        slideImage.addEventListener('wheel', handleZoom);
 
-       // Alteração da duração do timer
-       document.getElementById('duration').addEventListener('change', () => {
-           seconds = parseInt(document.getElementById('duration').value);
-           updateTimerDisplay();
-       });
-       
-       // Mostrar ou esconder opções de close-up dependendo da seleção de gênero
-       document.getElementById("gender").addEventListener("change", function() {
-         if (this.value === "close-ups") {
-             document.getElementById("closeup-options").style.display = "block";
-             document.getElementById("couple-options").style.display = "none";
-         } else if (this.value === "couple-group") {
-             document.getElementById("couple-options").style.display = "block";
-             document.getElementById("closeup-options").style.display = "none";
-         } else {
-             document.getElementById("closeup-options").style.display = "none";
-             document.getElementById("couple-options").style.display = "none";
-         }
-       });
+        // Drag event listeners
+        slideImage.addEventListener('mousedown', startDrag);
+        slideImage.addEventListener('mousemove', drag);
+        slideImage.addEventListener('mouseup', stopDrag);
+        slideImage.addEventListener('mouseleave', stopDrag);
+
+        prevBtn.addEventListener('click', prevImage);
+        nextBtn.addEventListener('click', nextImage);
+        pauseBtn.addEventListener('click', togglePause);
+
+        // Category selection logic
+        genderSelect.addEventListener('change', function() {
+            if (this.value === 'couple-group') {
+                coupleOptions.style.display = 'block';
+                closeupOptions.style.display = 'none';
+            } else if (this.value === 'close-ups') {
+                closeupOptions.style.display = 'block';
+                coupleOptions.style.display = 'none';
+            } else {
+                coupleOptions.style.display = 'none';
+                closeupOptions.style.display = 'none';
+            }
+        });
+
+        // Duration select event listener
+        durationSelect.addEventListener('change', function() {
+            clearInterval(timer); // Limpa o timer anterior
+            startTimer(parseInt(this.value)); // Inicia o timer com a nova duração
+        });
+
+        // Start button functionality
+        startBtn.addEventListener('click', function() {
+            const selectedGender = genderSelect.value;
+            let filteredImages = [];
+
+            if (selectedGender === 'all') {
+                filteredImages = [...originalImages];
+            } else if (selectedGender === 'couple-group') {
+                const selectedType = typeSelect.value;
+                filteredImages = originalImages.filter(img => img.category === 'couple-group');
+                if (selectedType !== 'all') {
+                    filteredImages = filteredImages.filter(img => img.type === selectedType);
+                }
+            } else if (selectedGender === 'close-ups') {
+                const selectedType = closeupTypeSelect.value;
+                filteredImages = originalImages.filter(img => img.category === 'close-ups');
+                if (selectedType !== 'all') {
+                    filteredImages = filteredImages.filter(img => img.type === selectedType);
+                }
+            } else {
+                filteredImages = originalImages.filter(img => img.category === selectedGender);
+            }
+
+            // Shuffle the images
+            for (let i = filteredImages.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredImages[i], filteredImages[j]] = [filteredImages[j], filteredImages[i]];
+            }
+
+            currentImages = filteredImages;
+            currentImageIndex = 0;
+            loadImage(currentImages[0].src);
+
+            categorySelection.style.display = 'none';
+            controls.style.display = 'flex';
+            slideContainer.style.display = 'flex';
+
+            const duration = parseInt(durationSelect.value);
+            startTimer(duration);
+        });
+
+        backBtn.addEventListener('click', function() {
+            clearInterval(timer);
+            categorySelection.style.display = 'block';
+            controls.style.display = 'none';
+            slideContainer.style.display = 'none';
+            isPaused = false;
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        });
     </script>
 </body>
 </html>
